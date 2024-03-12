@@ -15,7 +15,7 @@ router.get('/example', (req, res) => {
 
 
 const upload = multer({ dest: 'uploads/' });
-router.get('/file/:id', auth, getFile);
+router.get('/file/:id', auth, registrationcontroller.getFile);
 app.post('/emergency/register', registrationcontroller.emergencyRegister);
 app.post('/emergency/login', registrationcontroller.emergencyLogin);
 app.post('/bharosa/register', registrationcontroller.bharosaRegister);
