@@ -275,8 +275,31 @@ const bharosaRegister = async (req, res) => {
     }
 };
 
+// const getFile = async (req, res) => {
+//     try {
+//         const fileId = req.params.id;
+//         const file = await File.findById(fileId);
+//         if (!file) {
+//             return res.status(404).json({ message: 'File not found' });
+//         }
+//         let contentType = 'application/octet-stream';
+//         if (file.filename.endsWith('.pdf')) {
+//             contentType = 'application/pdf';
+//         } else if (file.filename.endsWith('.doc') || file.filename.endsWith('.docx')) {
+//             contentType = 'application/msword';
+//         }
+//         res.set('Content-Type', contentType);
+//         fs.createReadStream(file.path).pipe(res);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: 'Error fetching file' });
+//     }
+// };
+
 const getFile = async (req, res) => {
     try {
+        const token = req.header('Authorization').replace('Bearer ', '');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const fileId = req.params.id;
         const file = await File.findById(fileId);
         if (!file) {
