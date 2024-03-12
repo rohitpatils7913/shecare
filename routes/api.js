@@ -1,6 +1,8 @@
 const express = require('express');
 const multer = require('multer');
 const registrationcontroller = require('../controller/registration');
+const auth = require('./middleware');
+
 const app = express();
 const router = express.Router();
 
@@ -13,7 +15,7 @@ router.get('/example', (req, res) => {
 
 
 const upload = multer({ dest: 'uploads/' });
-
+router.get('/file/:id', auth, getFile);
 app.post('/emergency/register', registrationcontroller.emergencyRegister);
 app.post('/emergency/login', registrationcontroller.emergencyLogin);
 app.post('/bharosa/register', registrationcontroller.bharosaRegister);
