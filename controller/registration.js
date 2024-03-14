@@ -318,7 +318,7 @@ const getFile = async (req, res) => {
         fs.createReadStream(file.path).pipe(res);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error fetching file',user_id:user_id });
+        res.status(500).json({ message: 'Error fetching file' });
     }
 };
 
