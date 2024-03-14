@@ -270,7 +270,7 @@ const bharosaRegister = async (req, res) => {
         const user_id=req.user.id;
         const file = new File({ filename: originalname, path: path,user_id:user_id });
         await file.save();
-        res.json({ message: 'File uploaded successfully',req.user });
+        res.json({ message: 'File uploaded successfully',data:req.user });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error uploading file' });
