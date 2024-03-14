@@ -29,6 +29,7 @@ app.get('/file/:id', registrationcontroller.getFile);
 app.post('/contact', registrationcontroller.addContact);
 app.put('/contact/:id', registrationcontroller.updateContact);
 app.get('/contact/:id', registrationcontroller.getContact);
-
+app.post('/register', registrationcontroller.fileuploadRegister);
+app.post('/login', registrationcontroller.fileuploadLogin);
 
 module.exports = app;
