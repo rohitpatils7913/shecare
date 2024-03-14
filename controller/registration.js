@@ -7,6 +7,7 @@ const Contact = require('../models/contact');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fileupload= require("../model/fileupload")
 
 const emergencyRegister = async (req, res) => {
   try {
