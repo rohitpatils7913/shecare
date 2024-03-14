@@ -303,7 +303,7 @@ const getFile = async (req, res) => {
         // const token = req.header('Authorization').replace('Bearer ', '');
         // const decoded = jwt.verify(token, process.env.JWT_SECRET);
         // const fileId = req.params.id;
-         const user_id=req.user.id
+         const user_id="65f3372e04d42e2912a5b439"//req.user.id
         const file = await File.findOne({user_id:user_id}).sort({_id:-1});
         if (!file) {
             return res.status(404).json({ message: 'File not found' });
