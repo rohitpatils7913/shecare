@@ -24,7 +24,7 @@ app.post('/athamanurbar/register', registrationcontroller.athamanurbarRegister);
 app.post('/legaladminstration/login',registrationcontroller.legalAdministrationLogin);
 app.post('/legaladminstration/register', registrationcontroller.legalAdministrationRegister);
 app.post('/athamanurbar/login',registrationcontroller.athamanurbarLogin);
-app.post('/upload', upload.single('file'), auth,registrationcontroller.uploadFile);
+app.post('/upload', auth,upload.single('file'),registrationcontroller.uploadFile);
 app.get('/file/:id', registrationcontroller.getFile);
 app.post('/contact', registrationcontroller.addContact);
 app.put('/contact/:id', registrationcontroller.updateContact);
