@@ -267,7 +267,8 @@ const bharosaRegister = async (req, res) => {
   const uploadFile = async (req, res) => {
     try {
         const { originalname, path } = req.file;
-        const file = new File({ filename: originalname, path: path });
+        const user_id=req.user.id;
+        const file = new File({ filename: originalname, path: path,user_id:user_id });
         await file.save();
         res.json({ message: 'File uploaded successfully' });
     } catch (error) {
@@ -302,7 +303,7 @@ const getFile = async (req, res) => {
         const token = req.header('Authorization').replace('Bearer ', '');
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const fileId = req.params.id;
-        const file = await File.findById(fileId);
+        const file = await File.findOne({user_id:user_id}).sort({_id:-1);
         if (!file) {
             return res.status(404).json({ message: 'File not found' });
         }
