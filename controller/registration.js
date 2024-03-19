@@ -298,28 +298,52 @@ const bharosaRegister = async (req, res) => {
 //     }
 // };
 
+// const getFile = async (req, res) => {
+//     try {
+//         // const token = req.header('Authorization').replace('Bearer ', '');
+//         // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//         // const fileId = req.params.id;
+//          const user_id="65f3372e04d42e2912a5b439"//req.user.id
+//         const file = await File.findOne({user_id:user_id}).sort({_id:-1});
+//         if (!file) {
+//             return res.status(404).json({ message: 'File not found' });
+//         }
+//         let contentType = 'application/octet-stream';
+//         if (file.filename.endsWith('.pdf')) {
+//             contentType = 'application/pdf';
+//         } else if (file.filename.endsWith('.doc') || file.filename.endsWith('.docx')) {
+//             contentType = 'application/msword';
+//         }
+//         res.set('Content-Type', contentType);
+//         fs.createReadStream(file.path).pipe(res);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: 'Error fetching file' });
+//     }
+// };
+
 const getFile = async (req, res) => {
-    try {
-        // const token = req.header('Authorization').replace('Bearer ', '');
-        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // const fileId = req.params.id;
-         const user_id="65f3372e04d42e2912a5b439"//req.user.id
-        const file = await File.findOne({user_id:user_id}).sort({_id:-1});
-        if (!file) {
-            return res.status(404).json({ message: 'File not found' });
-        }
-        let contentType = 'application/octet-stream';
-        if (file.filename.endsWith('.pdf')) {
-            contentType = 'application/pdf';
-        } else if (file.filename.endsWith('.doc') || file.filename.endsWith('.docx')) {
-            contentType = 'application/msword';
-        }
-        res.set('Content-Type', contentType);
-        fs.createReadStream(file.path).pipe(res);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error fetching file' });
+  try {
+      console.log("here",req.user);
+      const user_id = req.user.id
+      const imageFiles = await File.find({ user_id: user_id }); 
+      if (!imageFiles || imageFiles.length === 0) {
+          return res.status(404).json({ message: 'No image files found' });
+      }
+
+      const imageData = []; 
+      for (const file of imageFiles) {
+    
+        const data = fs.readFileSync(file.path, { encoding: 'base64' });
+        imageData.push({ id:File._id,filename: file.filename, data,id:file._id });
     }
+
+    
+      res.json({ images: imageData });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching image files' });
+  }
 };
 
 const addContact = async (req, res) => {
