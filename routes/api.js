@@ -12,10 +12,17 @@ router.get('/example', (req, res) => {
 });
 
 
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'uploads/'); 
+  },
+  filename: function(req, file, cb) {
+    cb(null, file.originalname); 
+  }
+});
 
-
-const upload = multer({ dest: 'uploads/' });
-router.get('/file/:id', auth, registrationcontroller.getFile);
+const upload = multer({ storage: storage });
+//router.get('/file/:id', auth, registrationcontroller.getFile);
 app.post('/emergency/register', registrationcontroller.emergencyRegister);
 app.post('/emergency/login', registrationcontroller.emergencyLogin);
 app.post('/bharosa/register', registrationcontroller.bharosaRegister);
@@ -25,7 +32,7 @@ app.post('/legaladminstration/login',registrationcontroller.legalAdministrationL
 app.post('/legaladminstration/register', registrationcontroller.legalAdministrationRegister);
 app.post('/athamanurbar/login',registrationcontroller.athamanurbarLogin);
 app.post('/upload', auth,upload.single('file'),registrationcontroller.uploadFile);
-app.get('/file/:id', registrationcontroller.getFile);
+app.get('/file', auth,registrationcontroller.getFile);
 app.post('/contact', registrationcontroller.addContact);
 app.put('/contact/:id', registrationcontroller.updateContact);
 app.get('/contact/:id', registrationcontroller.getContact);
