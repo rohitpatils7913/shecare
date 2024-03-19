@@ -5,6 +5,7 @@ const auth = async (req, res, next) => {
         const token = req.header('Authorization').replace('Bearer ', '');
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded.user;
+        console.log("in middleware")
         next();
     } catch (error) {
         console.error(error);
