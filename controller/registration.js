@@ -7,7 +7,9 @@ const Contact = require('../models/contact');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const fileupload= require("../models/fileuploadModel.js")
+const fileupload= require("../models/fileuploadModel.js");
+const path = require('path');
+
 
 const emergencyRegister = async (req, res) => {
   try {
@@ -332,11 +334,18 @@ const getFile = async (req, res) => {
       }
 
       const imageData = []; 
-      for (const file of imageFiles) {
+    //   for (const file of imageFiles) {
     
-        const data = fs.readFileSync(file.path, { encoding: 'base64' });
-        imageData.push({ id:File._id,filename: file.filename, data,id:file._id });
-    }
+    //     const data = fs.readFileSync(file.path, { encoding: 'base64' });
+    //     imageData.push({ id:File._id,filename: file.filename, data,id:file._id });
+    // }
+     for (const file of imageFiles) {
+            // Construct the file path using path.join()
+            const filePath = path.join('uploads', file.filename);
+            // Read the image file from the file system
+            const data = fs.readFileSync(filePath, { encoding: 'base64' });
+            imageData.push({ _id: file._id, filename: file.filename, data });
+        }
 
     
       res.json({ images: imageData });
