@@ -7,8 +7,19 @@ const Contact = require('../models/contact');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const fileupload= require("../models/fileuploadModel.js");
-const path = require('path');
+const fileupload= require("../models/fileuploadModel.js")
+const AWS = require('aws-sdk');
+
+
+// Set the AWS credentials and region
+AWS.config.update({
+    accessKeyId: 'AKIATCKANFEUJTJXDG5C',
+    secretAccessKey: '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',
+    region: 'ap-south-1'
+});
+
+// Create an S3 service object
+const s3 = new AWS.S3();
 
 
 const emergencyRegister = async (req, res) => {
@@ -266,18 +277,62 @@ const bharosaRegister = async (req, res) => {
 
   
 
-  const uploadFile = async (req, res) => {
-    try {
-        const { originalname, path } = req.file;
-        const user_id=req.user.id;
-        const file = new File({ filename: originalname, path: path,user_id:user_id });
-        await file.save();
-        res.json({ message: 'File uploaded successfully',data:req.user });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error uploading file' });
-    }
-};
+//   const uploadFile = async (req, res) => {
+//     try {
+//         const { originalname, path } = req.file;
+//         const user_id=req.user.id;
+//         const file = new File({ filename: originalname, path: path,user_id:user_id });
+//         await file.save();
+//         res.json({ message: 'File uploaded successfully',data:req.user });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: 'Error uploading file' });
+//     }
+// };
+
+const uploadFile=async(req,res)=>{
+  try {
+    const filePath = req.file.path;
+    const fileName = req.file.originalname;
+  
+    // Specify the bucket name
+    const bucketName = 'wecare121';
+  
+    // Read the file
+    fs.readFile(filePath, (err, data) => {
+        if (err) {
+            console.error("Error reading file:", err);
+            res.status(500).send("Error uploading file");
+            return;
+        }
+  
+        // Set the parameters for uploading
+        const uploadParams = {
+            Bucket: bucketName,
+            Key: fileName,
+            Body: data
+        };
+  
+        // Upload the file to the S3 bucket
+        s3.upload(uploadParams, async(err, uploadData) => {
+            if (err) {
+                console.error("Error uploading file:", err);
+                res.status(500).send("Error uploading file");
+                return;
+            }
+            console.log("File uploaded successfully. Location:", uploadData.Location);
+  
+                    const user_id=req.user.id;
+                    const file = new File({ filename: fileName, path: uploadData.Location,user_id:user_id });
+                    await file.save();
+                    res.json({ message: 'File uploaded successfully',data:req.user });
+        });
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({msg:"internal server error"})
+  }
+}
 
 // const getFile = async (req, res) => {
 //     try {
@@ -305,8 +360,9 @@ const bharosaRegister = async (req, res) => {
 //         // const token = req.header('Authorization').replace('Bearer ', '');
 //         // const decoded = jwt.verify(token, process.env.JWT_SECRET);
 //         // const fileId = req.params.id;
+//         console.log("here")
 //          const user_id="65f3372e04d42e2912a5b439"//req.user.id
-//         const file = await File.findOne({user_id:user_id}).sort({_id:-1});
+//         const file = await File.find({user_id:user_id}).sort({_id:-1});
 //         if (!file) {
 //             return res.status(404).json({ message: 'File not found' });
 //         }
@@ -329,31 +385,20 @@ const getFile = async (req, res) => {
       console.log("here",req.user);
       const user_id = req.user.id
       const imageFiles = await File.find({ user_id: user_id }); 
-      if (!imageFiles || imageFiles.length === 0) {
-          return res.status(404).json({ message: 'No image files found' });
+      let data=[];
+      for(let i=0;i<imageFiles.length;i++){
+        data.push(imageFiles[i].path)
       }
 
-      const imageData = []; 
-    //   for (const file of imageFiles) {
     
-    //     const data = fs.readFileSync(file.path, { encoding: 'base64' });
-    //     imageData.push({ id:File._id,filename: file.filename, data,id:file._id });
-    // }
-     for (const file of imageFiles) {
-            // Construct the file path using path.join()
-            const filePath = path.join('uploads', file.filename);
-            // Read the image file from the file system
-            const data = fs.readFileSync(filePath, { encoding: 'base64' });
-            imageData.push({ _id: file._id, filename: file.filename, data });
-        }
-
-    
-      res.json({ images: imageData });
+      res.json({ images: data });
   } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error fetching image files' });
   }
 };
+
+
 
 const addContact = async (req, res) => {
     try {
