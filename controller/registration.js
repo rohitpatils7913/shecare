@@ -8,7 +8,7 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fileupload= require("../models/fileuploadModel.js")
-const AWS = require('aws-sdk');
+ const AWS = require('aws-sdk');
 
 
 // Set the AWS credentials and region
