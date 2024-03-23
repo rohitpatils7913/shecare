@@ -10,8 +10,8 @@ const router = express.Router();
 router.get('/example', (req, res) => {
   res.send('Example route');
 });
-
-// const storage = multer.diskStorage({
+  
+  // const storage = multer.diskStorage({
 //   destination: function(req, file, cb) {
 //     cb(null, 'uploads/'); 
 //   },
